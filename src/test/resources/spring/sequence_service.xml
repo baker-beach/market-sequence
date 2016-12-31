@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context.xsd
+          http://www.springframework.org/schema/data/mongo
+          http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+          http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- bean id="jdbcDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="${sequence.url}" />
+		<property name="username" value="${sequence.username}" />
+		<property name="password" value="${sequence.password}" />
+		<property name="initialSize" value="${sequence.initialSize}" />
+		<property name="maxActive" value="${sequence.maxActive}" />
+		<property name="maxWait" value="${sequence.maxWait}" />
+		<property name="minEvictableIdleTimeMillis" value="${sequence.minEvictableIdleTimeMillis}" />
+		<property name="timeBetweenEvictionRunsMillis" value="${sequence.timeBetweenEvictionRunsMillis}" />
+	</bean>
+
+	<bean id="jdbcTxManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="jdbcDataSource" />
+	</bean>
+
+	<bean id="customerSessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource" ref="jdbcDataSource" />
+		<property name="annotatedClasses">
+			<list>
+				<value>com.bakerbeach.market.sequence.model.Sequence</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="sequenceDao" class="com.bakerbeach.market.sequence.service.SequneceMySqlDao">
+		<property name="sessionFactory" ref="customerSessionFactory"></property>
+		<property name="transactionManager" ref="jdbcTxManager"></property>
+	</bean>-->
+
+	<mongo:mongo id="demo" host="${mongo.host}" port="${mongo.port}">
+		<mongo:options connections-per-host="${mongo.default.connectionsPerHost}"
+			threads-allowed-to-block-for-connection-multiplier="${mongo.default.threadsAllowedToBlockForConnectionMultiplier}"
+			connect-timeout="${mongo.default.connectTimeout}" max-wait-time="${mongo.default.maxWaitTime}"
+			auto-connect-retry="${mongo.default.autoConnectRetry}"
+			socket-keep-alive="${mongo.default.socketKeepAlive}" socket-timeout="${mongo.default.socketTimeout}"
+			slave-ok="${mongo.default.slaveOk}" write-number="1" write-timeout="0"
+			write-fsync="true" />
+	</mongo:mongo>
+
+	<mongo:db-factory id="shopDbFactory" mongo-ref="demo"
+		dbname="${mongo.shop.dbName}" username="${mongo.shop.dbUser}"
+		password="${mongo.shop.dbPwd}" />
+
+	<bean id="shopTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg name="mongoDbFactory" ref="shopDbFactory" />
+	</bean>
+	
+	<bean id="sequenceDao" class="com.bakerbeach.market.sequence.service.SequneceMongoDao">
+		<property name="mongoTemplate" ref="shopTemplate"></property>
+		<property name="collectionName" value="sequence"></property>
+	</bean>
+
+	<bean id="sequenceService"
+		class="com.bakerbeach.market.sequence.service.SequenceServiceImpl">
+		<property name="sequenceDao" ref="sequenceDao"></property>
+	</bean>
+
+</beans>
