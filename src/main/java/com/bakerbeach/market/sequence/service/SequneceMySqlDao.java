@@ -11,8 +11,8 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.bakerbeach.market.sequence.model.Sequence;
 
-public class SequneceMySqlDao implements SequenceDao{
-	
+public class SequneceMySqlDao implements SequenceDao {
+
 	private static final Long DEFAULT_INITIAL_VALUE = 0L;
 
 	private SessionFactory sessionFactory;
@@ -38,7 +38,7 @@ public class SequneceMySqlDao implements SequenceDao{
 			throw e;
 		} finally {
 			if (session.isOpen()) {
-				SessionFactoryUtils.releaseSession(session, sessionFactory);				
+				SessionFactoryUtils.releaseSession(session, sessionFactory);
 			}
 		}
 	}
@@ -55,5 +55,9 @@ public class SequneceMySqlDao implements SequenceDao{
 		this.transactionManager = transactionManager;
 	}
 
+	@Override
+	public Long generateId(String key, Long offset) throws SequenceDaoException {
+		return generateId(key);
+	}
 
 }

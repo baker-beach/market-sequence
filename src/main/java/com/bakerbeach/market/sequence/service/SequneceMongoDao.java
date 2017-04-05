@@ -14,13 +14,19 @@ public class SequneceMongoDao implements SequenceDao {
 
 	private String collectionName;
 
-	public Long generateId(String key) throws SequenceDaoException{
-		try{
+	@Override
+	public Long generateId(String key) throws SequenceDaoException {
+		return generateId(key, DEFAULT_INCREMENT_VALUE);
+	}
+
+	@Override
+	public Long generateId(String key, Long offset) throws SequenceDaoException {
+		try {
 			DBObject dbo = getDBCollection().findAndModify(new BasicDBObject("key", key), null, null, false,
-					new BasicDBObject("$inc", new BasicDBObject("value", DEFAULT_INCREMENT_VALUE)), true, true);
-		
-			return (Long)dbo.get("value");
-		}catch(Exception e){
+					new BasicDBObject("$inc", new BasicDBObject("value", offset)), true, true);
+
+			return (Long) dbo.get("value");
+		} catch (Exception e) {
 			throw new SequenceDaoException(e);
 		}
 	}

@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>com.bakerbeach.market</groupId>
 			<artifactId>market-sequence-api</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -33,4 +33,5 @@
 		<plugins>
 		</plugins>
 	</build>
+	<version>1.0.1</version>
 </project>

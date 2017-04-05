@@ -1,17 +1,27 @@
 package com.bakerbeach.market.sequence.service;
 
-import com.bakerbeach.market.sequence.service.SequenceService;
-import com.bakerbeach.market.sequence.service.SequenceServiceException;
-
 public class SequenceServiceImpl implements SequenceService {
-	
+
 	private SequenceDao sequenceDao;
 
 	@Override
-	public Long generateId(String key) throws SequenceServiceException{
-		try{
+	public Long generateId(String key) throws SequenceServiceException {
+		try {
 			return sequenceDao.generateId(key);
-		}catch(SequenceDaoException e){
+		} catch (SequenceDaoException e) {
+			throw new SequenceServiceException(e);
+		}
+	}
+	
+	@Override
+	public Long generateId(String key, Long maxRandomOffset) throws SequenceServiceException {
+		try {
+			Long offset = null;			
+			if (maxRandomOffset != null) {
+				offset = new Double(Math.random() * maxRandomOffset).longValue();
+			}
+			return sequenceDao.generateId(key, offset);
+		} catch (SequenceDaoException e) {
 			throw new SequenceServiceException(e);
 		}
 	}
@@ -24,7 +34,8 @@ public class SequenceServiceImpl implements SequenceService {
 	}
 
 	/**
-	 * @param sequenceDao the sequenceDao to set
+	 * @param sequenceDao
+	 *            the sequenceDao to set
 	 */
 	public void setSequenceDao(SequenceDao sequenceDao) {
 		this.sequenceDao = sequenceDao;
