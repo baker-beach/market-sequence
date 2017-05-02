@@ -20,7 +20,7 @@ public class SequenceServiceImpl implements SequenceService {
 			if (maxRandomOffset != null) {
 				offset = new Double(Math.random() * maxRandomOffset).longValue();
 			}
-			return sequenceDao.generateId(key, offset);
+			return sequenceDao.generateId(key, offset+1);
 		} catch (SequenceDaoException e) {
 			throw new SequenceServiceException(e);
 		}
